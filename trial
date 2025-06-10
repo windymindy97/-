@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>🎰 추억의 뽑기판</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Press Start 2P', system-ui;
+      background-color: #f4ede3;
+      color: #3e2b23;
+      text-align: center;
+      padding: 30px;
+    }
+
+    h1 {
+      font-size: 1.5em;
+      color: #8b2e2e;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px #ffa94d;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(20, 1fr);
+      gap: 6px;
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .cell {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(145deg, #fdfaf6, #e9e0d1);
+      border: 2px solid #c0a27d;
+      box-shadow: inset -1px -1px 3px #fff, inset 1px 1px 2px #bbb;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      font-size: 10px;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+    }
+
+    .cell:hover {
+      transform: scale(1.1);
+      background-color: #ffe4b5;
+    }
+
+    .revealed {
+      color: #fff;
+      font-size: 10px;
+      font-weight: bold;
+    }
+
+    .rank-1 {
+      background-color: #8b0000 !important; /* 붉은 브라운 */
+    }
+
+    .rank-2 {
+      background-color: #ff8c00 !important; /* 오렌지 */
+    }
+
+    .rank-3 {
+      background-color: #003366 !important; /* 남색 */
+    }
+
+    .rank-4 {
+      background-color: #006666 !important; /* 진한 청록 */
+    }
+
+    .rank-5 {
+      background-color: #c2b280 !important; /* 클래식 베이지 */
+    }
+
+    .result {
+      margin-top: 30px;
+      font-size: 1em;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🎰 추억의 뽑기판 (총 300칸)</h1>
+  <div class="grid" id="grid"></div>
+  <div class="result" id="result">클릭해서 상품을 뽑아보세요!</div>
+
+  <script>
+    const totalCells = 300;
+    const prizePool = [];
+
+    // 상품 구성: [상품등수, 개수]
+    const prizes = [
+      { rank: 1, count: 10 },
+      { rank: 2, count: 30 },
+      { rank: 3, count: 40 },
+      { rank: 4, count: 100 },
+      { rank: 5, count: 100 },
+      { rank: 0, count: totalCells - (10 + 30 + 40 + 100 + 100) } // 꽝
+    ];
+
+    prizes.forEach(p => {
+      for (let i = 0; i < p.count; i++) {
+        prizePool.push(p.rank);
+      }
+    });
+
+    // 랜덤 섞기
+    prizePool.sort(() => Math.random() - 0.5);
+
+    const grid = document.getElementById('grid');
+    const result = document.getElementById('result');
+
+    for (let i = 0; i < totalCells; i++) {
+      const cell = document.createElement('div');
+      cell.className = 'cell';
+      cell.innerText = i + 1;
+      cell.addEventListener('click', function () {
+        if (cell.classList.contains('revealed')) return;
+        const prize = prizePool[i];
+        cell.classList.add('revealed');
+        cell.innerText = prize === 0 ? '꽝' : `${prize}등`;
+        if (prize !== 0) cell.classList.add(`rank-${prize}`);
+        result.innerText = prize === 0 ? '😢 아쉽게도 꽝!' : `🎉 축하합니다! ${prize}등에 당첨되었어요!`;
+      });
+      grid.appendChild(cell);
+    }
+  </script>
+</body>
+</html>
